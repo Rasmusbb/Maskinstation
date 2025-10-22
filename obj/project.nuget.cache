@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "EjTONqeJln4=",
+  "dgSpecHash": "EGOYMyvpqiM=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Rasmu\\source\\repos\\Maskinstation\\Maskinstation.csproj",
+  "projectFilePath": "C:\\Users\\Rasmu\\source\\repos\\Rasmusbb\\Maskinstation\\Maskinstation.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Rasmu\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "C:\\Users\\Rasmu\\.nuget\\packages\\microsoft.openapi\\1.6.14\\microsoft.openapi.1.6.14.nupkg.sha512",
