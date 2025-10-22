@@ -1,0 +1,6 @@
+@Maskinstation_HostAddress = http://localhost:5115
+
+GET {{Maskinstation_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
