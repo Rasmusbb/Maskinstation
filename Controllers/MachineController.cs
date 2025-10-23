@@ -31,17 +31,31 @@ namespace Maskinstation.Controllers
         [HttpGet("GetByID")]
         public async Task<ActionResult<MachineDTOID>> GetById(Guid MachineID)
         {
-            var Machine = await _context.GetbyIDAsync(MachineID);
+            var Machine = await _context.GetByIDAsync(MachineID);
             if (Machine == null)
                 return NotFound();
 
             return Ok(Machine);
         }
 
-        [HttpGet("GetAll")]
-        public async Task<ActionResult<MachineDTOID>> GetAll(List<Guid> tags)
+        [HttpPut("Edit")]
+        public async Task<ActionResult<bool>> Update(Guid ID, MachineDTO machine)
         {
-            return Ok(await _context.GetAllAsync(tags));
+            var Machine = await _context.UpdateAsync(ID,machine);
+            return Ok(machine);
+        }
+
+        [HttpGet("GetByTags")]
+        public  async Task<ActionResult<MachineDTOID>> GetByTags(List<Guid> TagIDs)
+        {
+            return Ok(await _context.GetByTags(TagIDs));
+        }
+
+
+        [HttpGet("GetAll")]
+        public async Task<ActionResult<MachineDTOID>> GetAll()
+        {
+            return Ok(await _context.GetAllAsync());
         }
 
         [HttpDelete("Delete")]

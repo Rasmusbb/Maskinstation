@@ -6,11 +6,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Maskinstation.Migrations
 {
     /// <inheritdoc />
-    public partial class basemodels : Migration
+    public partial class test : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Tags",
+                columns: table => new
+                {
+                    TagID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TagName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TagType = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tags", x => x.TagID);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Brands",
                 columns: table => new
@@ -25,7 +38,7 @@ namespace Maskinstation.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "images",
+                name: "Images",
                 columns: table => new
                 {
                     ImageID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -35,7 +48,7 @@ namespace Maskinstation.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_images", x => x.ImageID);
+                    table.PrimaryKey("PK_Images", x => x.ImageID);
                 });
 
             migrationBuilder.CreateTable(
@@ -44,19 +57,19 @@ namespace Maskinstation.Migrations
                 {
                     UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    profilImageImageID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.UserID);
                     table.ForeignKey(
-                        name: "FK_Users_images_profilImageImageID",
-                        column: x => x.profilImageImageID,
-                        principalTable: "images",
-                        principalColumn: "ImageID",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_Users_Images_ImageID",
+                        column: x => x.ImageID,
+                        principalTable: "Images",
+                        principalColumn: "ImageID");
                 });
 
             migrationBuilder.CreateTable(
@@ -86,28 +99,51 @@ namespace Maskinstation.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tags",
+                name: "UserTags",
                 columns: table => new
                 {
                     TagID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TagName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TagType = table.Column<int>(type: "int", nullable: false),
-                    MachineID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tags", x => x.TagID);
+                    table.PrimaryKey("PK_UserTags", x => new { x.UserID, x.TagID });
                     table.ForeignKey(
-                        name: "FK_Tags_Machines_MachineID",
-                        column: x => x.MachineID,
-                        principalTable: "Machines",
-                        principalColumn: "MachineID");
+                        name: "FK_UserTags_Tags_TagID",
+                        column: x => x.TagID,
+                        principalTable: "Tags",
+                        principalColumn: "TagID",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Tags_Users_UserID",
+                        name: "FK_UserTags_Users_UserID",
                         column: x => x.UserID,
                         principalTable: "Users",
-                        principalColumn: "UserID");
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MachineTags",
+                columns: table => new
+                {
+                    TagID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MachineID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MachineTags", x => new { x.MachineID, x.TagID });
+                    table.ForeignKey(
+                        name: "FK_MachineTags_Machines_MachineID",
+                        column: x => x.MachineID,
+                        principalTable: "Machines",
+                        principalColumn: "MachineID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MachineTags_Tags_TagID",
+                        column: x => x.TagID,
+                        principalTable: "Tags",
+                        principalColumn: "TagID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -116,13 +152,13 @@ namespace Maskinstation.Migrations
                 column: "ImageID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_images_MachineID",
-                table: "images",
+                name: "IX_Images_MachineID",
+                table: "Images",
                 column: "MachineID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_images_UserID",
-                table: "images",
+                name: "IX_Images_UserID",
+                table: "Images",
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
@@ -136,38 +172,44 @@ namespace Maskinstation.Migrations
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tags_MachineID",
-                table: "Tags",
-                column: "MachineID");
+                name: "IX_MachineTags_TagID",
+                table: "MachineTags",
+                column: "TagID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tags_UserID",
-                table: "Tags",
-                column: "UserID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_profilImageImageID",
+                name: "IX_Users_Email",
                 table: "Users",
-                column: "profilImageImageID");
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_ImageID",
+                table: "Users",
+                column: "ImageID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserTags_TagID",
+                table: "UserTags",
+                column: "TagID");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Brands_images_ImageID",
+                name: "FK_Brands_Images_ImageID",
                 table: "Brands",
                 column: "ImageID",
-                principalTable: "images",
+                principalTable: "Images",
                 principalColumn: "ImageID",
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_images_Machines_MachineID",
-                table: "images",
+                name: "FK_Images_Machines_MachineID",
+                table: "Images",
                 column: "MachineID",
                 principalTable: "Machines",
                 principalColumn: "MachineID");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_images_Users_UserID",
-                table: "images",
+                name: "FK_Images_Users_UserID",
+                table: "Images",
                 column: "UserID",
                 principalTable: "Users",
                 principalColumn: "UserID");
@@ -177,18 +219,24 @@ namespace Maskinstation.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Brands_images_ImageID",
+                name: "FK_Brands_Images_ImageID",
                 table: "Brands");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Users_images_profilImageImageID",
+                name: "FK_Users_Images_ImageID",
                 table: "Users");
+
+            migrationBuilder.DropTable(
+                name: "MachineTags");
+
+            migrationBuilder.DropTable(
+                name: "UserTags");
 
             migrationBuilder.DropTable(
                 name: "Tags");
 
             migrationBuilder.DropTable(
-                name: "images");
+                name: "Images");
 
             migrationBuilder.DropTable(
                 name: "Machines");

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Maskinstation.Migrations
 {
     [DbContext(typeof(MaskinstationContext))]
-    [Migration("20251022095338_basemodels")]
-    partial class basemodels
+    [Migration("20251023134648_test")]
+    partial class test
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,36 @@ namespace Maskinstation.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Maskinstation.Models.MachineTags", b =>
+                {
+                    b.Property<Guid>("MachineID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TagID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("MachineID", "TagID");
+
+                    b.HasIndex("TagID");
+
+                    b.ToTable("MachineTags");
+                });
+
+            modelBuilder.Entity("Maskinstation.Models.UserTags", b =>
+                {
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TagID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("UserID", "TagID");
+
+                    b.HasIndex("TagID");
+
+                    b.ToTable("UserTags");
+                });
 
             modelBuilder.Entity("Maskinstation.models.Brand", b =>
                 {
@@ -43,6 +73,31 @@ namespace Maskinstation.Migrations
                     b.HasIndex("ImageID");
 
                     b.ToTable("Brands");
+                });
+
+            modelBuilder.Entity("Maskinstation.models.Image", b =>
+                {
+                    b.Property<Guid>("ImageID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ImageURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("MachineID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ImageID");
+
+                    b.HasIndex("MachineID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("Maskinstation.models.Machine", b =>
@@ -79,9 +134,6 @@ namespace Maskinstation.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("MachineID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("TagName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -89,14 +141,7 @@ namespace Maskinstation.Migrations
                     b.Property<int>("TagType")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("UserID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("TagID");
-
-                    b.HasIndex("MachineID");
-
-                    b.HasIndex("UserID");
 
                     b.ToTable("Tags");
                 });
@@ -109,7 +154,10 @@ namespace Maskinstation.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid?>("ImageID")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -119,50 +167,78 @@ namespace Maskinstation.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("profilImageImageID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserID");
 
-                    b.HasIndex("profilImageImageID");
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("ImageID");
 
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Maskinstation.models.image", b =>
+            modelBuilder.Entity("Maskinstation.Models.MachineTags", b =>
                 {
-                    b.Property<Guid>("ImageID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.HasOne("Maskinstation.models.Machine", "Machine")
+                        .WithMany("MachineTags")
+                        .HasForeignKey("MachineID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<string>("ImageURL")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.HasOne("Maskinstation.models.Tag", "Tag")
+                        .WithMany()
+                        .HasForeignKey("TagID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<Guid?>("MachineID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Navigation("Machine");
 
-                    b.Property<Guid?>("UserID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Navigation("Tag");
+                });
 
-                    b.HasKey("ImageID");
+            modelBuilder.Entity("Maskinstation.Models.UserTags", b =>
+                {
+                    b.HasOne("Maskinstation.models.Tag", "Tag")
+                        .WithMany()
+                        .HasForeignKey("TagID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasIndex("MachineID");
+                    b.HasOne("Maskinstation.models.User", "User")
+                        .WithMany("UserTags")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasIndex("UserID");
+                    b.Navigation("Tag");
 
-                    b.ToTable("images");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Maskinstation.models.Brand", b =>
                 {
-                    b.HasOne("Maskinstation.models.image", "Image")
+                    b.HasOne("Maskinstation.models.Image", "Image")
                         .WithMany()
                         .HasForeignKey("ImageID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Image");
+                });
+
+            modelBuilder.Entity("Maskinstation.models.Image", b =>
+                {
+                    b.HasOne("Maskinstation.models.Machine", null)
+                        .WithMany("images")
+                        .HasForeignKey("MachineID");
+
+                    b.HasOne("Maskinstation.models.User", null)
+                        .WithMany("images")
+                        .HasForeignKey("UserID");
                 });
 
             modelBuilder.Entity("Maskinstation.models.Machine", b =>
@@ -182,49 +258,25 @@ namespace Maskinstation.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Maskinstation.models.Tag", b =>
-                {
-                    b.HasOne("Maskinstation.models.Machine", null)
-                        .WithMany("Tags")
-                        .HasForeignKey("MachineID");
-
-                    b.HasOne("Maskinstation.models.User", null)
-                        .WithMany("Tags")
-                        .HasForeignKey("UserID");
-                });
-
             modelBuilder.Entity("Maskinstation.models.User", b =>
                 {
-                    b.HasOne("Maskinstation.models.image", "profilImage")
+                    b.HasOne("Maskinstation.models.Image", "Image")
                         .WithMany()
-                        .HasForeignKey("profilImageImageID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ImageID");
 
-                    b.Navigation("profilImage");
-                });
-
-            modelBuilder.Entity("Maskinstation.models.image", b =>
-                {
-                    b.HasOne("Maskinstation.models.Machine", null)
-                        .WithMany("images")
-                        .HasForeignKey("MachineID");
-
-                    b.HasOne("Maskinstation.models.User", null)
-                        .WithMany("images")
-                        .HasForeignKey("UserID");
+                    b.Navigation("Image");
                 });
 
             modelBuilder.Entity("Maskinstation.models.Machine", b =>
                 {
-                    b.Navigation("Tags");
+                    b.Navigation("MachineTags");
 
                     b.Navigation("images");
                 });
 
             modelBuilder.Entity("Maskinstation.models.User", b =>
                 {
-                    b.Navigation("Tags");
+                    b.Navigation("UserTags");
 
                     b.Navigation("images");
                 });

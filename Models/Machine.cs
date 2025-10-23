@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Maskinstation.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Maskinstation.models
@@ -17,7 +18,7 @@ namespace Maskinstation.models
         [ForeignKey("BrandID")]
         public Guid BrandID { get; set; }
         public Brand Brand { get; set; }
-        public ICollection <Tag> Tags { get; set; }
+        public ICollection <MachineTags> MachineTags { get; set; }
         public ICollection<Image> images { get; set; }  
 
     }
