@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Maskinstation.models
+namespace Maskinstation.Models
 {
     public enum TagType
     {

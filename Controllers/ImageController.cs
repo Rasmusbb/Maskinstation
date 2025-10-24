@@ -1,6 +1,7 @@
 ﻿using Maskinstation.DTOs;
 using Maskinstation.interfaces;
-using Maskinstation.models;
+using Maskinstation.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Maskinstation.Controllers
@@ -16,6 +17,7 @@ namespace Maskinstation.Controllers
             _context = imageService;
         }
 
+        [Authorize]
         [HttpPost("Create")]
         public async Task<IActionResult> Create(ImageDTO imageDTO)
         {
@@ -37,7 +39,7 @@ namespace Maskinstation.Controllers
 
             return Ok(image);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPut("Edit")]
         public async Task<ActionResult<bool>> Update(Guid ID, ImageDTO imageDTO)
         {
@@ -52,6 +54,7 @@ namespace Maskinstation.Controllers
             return Ok(await _context.GetAllAsync());
         }
 
+        [Authorize]
         [HttpDelete("Delete")]
         public async Task<IActionResult> Delete(Guid imageID)
         {

@@ -1,7 +1,7 @@
 ﻿using Maskinstation.interfaces;
 using Maskinstation.Data;
 using Maskinstation.DTOs;
-using Maskinstation.models;
+using Maskinstation.Models;
 using Mapster;
 
 

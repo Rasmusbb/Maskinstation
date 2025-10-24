@@ -1,4 +1,4 @@
-﻿using Maskinstation.models;
+﻿using Maskinstation.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using System.IdentityModel.Tokens.Jwt;
@@ -31,13 +31,17 @@ namespace Maskinstation.Data
 
         public string GenerateJwtToken(User user)
         {
+            string value = _configuration.GetSection("Jwt:Key").Value;
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Jwt:Key").Value));
+            string keytext = key.Key.ToString();
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             Claim[] claims = new Claim[]
             {
                 new Claim("UserID", user.UserID.ToString()),
                 new Claim("Name", user.Name.ToString()),
                 new Claim("Email",user.Email.ToString()),
+                new Claim(ClaimTypes.Role, user.Role)
+
             };
             var token = new JwtSecurityToken(
                 issuer: _configuration.GetSection("Jwt:Issuer").Value,

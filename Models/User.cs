@@ -1,9 +1,8 @@
-﻿using Maskinstation.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Maskinstation.models
+namespace Maskinstation.Models
 {
     public class User
     {
@@ -17,7 +16,8 @@ namespace Maskinstation.models
         [ForeignKey("ImageID")]
         public Guid? ImageID { get; set; }
         public Image? Image { get; set; }
-
+        public string? RefreshToken { get; set; }
+        public DateTime? RefeshTokenExpiryTime { get; set; }
         public ICollection<UserTags> UserTags { get; set; }
         public ICollection<Image> images { get; set; }
     }

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Maskinstation.models
+namespace Maskinstation.Models
 {
 
     public class Machine

@@ -1,4 +1,4 @@
-﻿using Maskinstation.models;
+﻿using Maskinstation.Models;
 
 namespace Maskinstation.DTOs
 {

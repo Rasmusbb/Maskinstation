@@ -277,6 +277,8 @@ ServiceFabricBackup/
 
 # Microsoft Fakes
 FakesAssemblies/
+# Entity Framework migrations
+/Migrations/
 
 # GhostDoc plugin setting file
 *.GhostDoc.xml

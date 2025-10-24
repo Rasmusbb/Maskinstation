@@ -1,7 +1,7 @@
 ﻿using Maskinstation.Data;
 using Maskinstation.DTOs;
 using Maskinstation.interfaces;
-using Maskinstation.models;
+using Maskinstation.Models;
 using Microsoft.EntityFrameworkCore;
 using Mapster;
 using Microsoft.AspNetCore.Http.HttpResults;

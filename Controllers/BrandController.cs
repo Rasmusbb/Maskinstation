@@ -1,6 +1,6 @@
 ﻿using Maskinstation.DTOs;
 using Maskinstation.interfaces;
-using Maskinstation.models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Maskinstation.Controllers
@@ -16,6 +16,7 @@ namespace Maskinstation.Controllers
             _context = BrandService;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("Create")]
         public async Task<IActionResult> Create(BrandDTO BrandDTO)
         {
@@ -38,6 +39,7 @@ namespace Maskinstation.Controllers
             return Ok(Brand);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("Edit")]
         public async Task<ActionResult<bool>> Update(Guid ID, BrandDTO BrandDTO)
         {
@@ -52,6 +54,7 @@ namespace Maskinstation.Controllers
             return Ok(await _context.GetAllAsync());
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("Delete")]
         public async Task<IActionResult> Delete(Guid BrandID)
         {

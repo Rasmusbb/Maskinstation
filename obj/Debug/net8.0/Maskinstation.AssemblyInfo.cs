@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Maskinstation")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+04e69302ea1c61aa41ceafd81c94a7b221d1a2ae")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+68eae07d247bf87e6d5ebe2ae41208312fe50046")]
 [assembly: System.Reflection.AssemblyProductAttribute("Maskinstation")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Maskinstation")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

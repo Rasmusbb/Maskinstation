@@ -1,8 +1,11 @@
 ﻿using Maskinstation.interfaces;
 using Maskinstation.Data;
 using Maskinstation.DTOs;
-using Maskinstation.models;
+using Maskinstation.Models;
 using Mapster;
+using BoilerMonitoringAPI.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Runtime.InteropServices;
 
 
 namespace Maskinstation.Services
@@ -21,15 +24,67 @@ namespace Maskinstation.Services
         string DBNullText = "Database context is not available.";
         public async Task<UserDTOID> CreateAsync(UserDTO UserDTO)
         {
+            try
+            {
+                if (_context.Users == null)
+                {
+                    throw new InvalidOperationException(DBNullText);
+                }
+                User User = UserDTO.Adapt<User>();
+                _context.Users.Add(User);
+                User.Password = _auth.Hash(User.Password, User.UserID.ToString());
+                await _context.SaveChangesAsync();
+                return User.Adapt<UserDTOID>();
+            }
+            catch(DbUpdateException dbEx)
+            {
+                throw new DbUpdateException("Conflict while saving user. Possibly duplicate data.",dbEx);
+            }
+        }
+
+        public async Task<UserTokens> Login(UserLoingObject UserLogin)
+        {
             if (_context.Users == null)
             {
                 throw new InvalidOperationException(DBNullText);
             }
-            User User = UserDTO.Adapt<User>();
-            _context.Users.Add(User);
-            User.Password = _auth.Hash(User.Password, User.UserID.ToString());
-            await _context.SaveChangesAsync();
-            return User.Adapt<UserDTOID>();
+            UserLogin.Email = UserLogin.Email.ToLower();
+            User user = _context.Users.FirstOrDefault(u => u.Email == UserLogin.Email);
+            if (user != null)
+            {
+                string hash = _auth.Hash(UserLogin.Password, user.UserID.ToString());
+                if (hash == user.Password)
+                {
+                    RefreshToken RefreshToken = await CreateRefreshToken(user);
+                    return new UserTokens(_auth.GenerateJwtToken(user), RefreshToken.Token);
+                }
+            }
+            return null;
+        }
+        public async Task<UserTokens> RefreshToken(RefreshTokenUser Token)
+        {
+            User user = _context.Users.Find(Token.UserID);
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"User with ID {Token.UserID} was not found.");
+
+            }
+            if (_auth.Hash(Token.RefreshToken, user.UserID.ToString()) == user.RefreshToken)
+            {
+                if (user.RefeshTokenExpiryTime < DateTime.UtcNow)
+                {
+                    user.RefreshToken = null;
+                    user.RefeshTokenExpiryTime = null;
+                    await _context.SaveChangesAsync();
+                    return null;
+                }
+                else
+                {
+                    RefreshToken RefreshToken = await CreateRefreshToken(user);
+                    return new UserTokens(_auth.GenerateJwtToken(user), RefreshToken.Token);
+                }
+            }
+            return null;
         }
 
         public async Task<IEnumerable<UserDTOID>> GetAllAsync()
@@ -74,6 +129,15 @@ namespace Maskinstation.Services
             _context.Users.Remove(User);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<RefreshToken> CreateRefreshToken(User user)
+        {
+            RefreshToken RefeshToken = new RefreshToken();
+            user.RefeshTokenExpiryTime = RefeshToken.ExpiryTime;
+            user.RefreshToken = _auth.Hash(RefeshToken.Token, user.UserID.ToString());
+            await _context.SaveChangesAsync();
+            return RefeshToken;
         }
     }
 
