@@ -1,4 +1,4 @@
-﻿using Maskinstation.interfaces;
+﻿using Maskinstation.Interfaces;
 using Maskinstation.Data;
 using Maskinstation.DTOs;
 using Maskinstation.Models;

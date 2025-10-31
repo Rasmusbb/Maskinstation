@@ -2,7 +2,7 @@
 
 using Maskinstation.DTOs;
 
-namespace Maskinstation.interfaces
+namespace Maskinstation.Interfaces
 {
     public interface IUser : ICRUD<UserDTO, UserDTOID>
     {

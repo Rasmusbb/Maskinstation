@@ -1,7 +1,7 @@
 ﻿
 
 using Maskinstation.DTOs;
-namespace Maskinstation.interfaces
+namespace Maskinstation.Interfaces
 {
     public interface IMachine : ICRUD<MachineDTO, MachineDTOID>
     {

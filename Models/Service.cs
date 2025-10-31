@@ -8,6 +8,6 @@ namespace Maskinstation.Models
         public Guid ServiceID { get; set; }
         public string ServiceName { get; set; }
         public string Description { get; set; }
-
+        ICollection<Machine> Machines { get; set; }
     }
 }

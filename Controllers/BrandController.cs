@@ -1,5 +1,5 @@
 ﻿using Maskinstation.DTOs;
-using Maskinstation.interfaces;
+using Maskinstation.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

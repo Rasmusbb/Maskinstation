@@ -1,6 +1,6 @@
 ﻿using Maskinstation.DTOs;
 
-namespace Maskinstation.interfaces
+namespace Maskinstation.Interfaces
 {
     public interface IImage : ICRUD<ImageDTO,ImageDTOID>
     {

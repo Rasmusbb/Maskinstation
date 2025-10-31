@@ -1,6 +1,6 @@
 
 using Maskinstation.Data;
-using Maskinstation.interfaces;
+using Maskinstation.Interfaces;
 using Maskinstation.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -26,6 +26,7 @@ namespace Maskinstation
             builder.Services.AddScoped<IBrand, BrandService>();
             builder.Services.AddScoped<IMachine,MachineService>();
             builder.Services.AddScoped<IGallery, GalleryService>();
+            builder.Services.AddScoped<ITag, TagService>();
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
