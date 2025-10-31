@@ -8,7 +8,7 @@ namespace Maskinstation.DTOs
 
     }
 
-    public class TagDTOID {
+    public class TagDTOID : TagDTO{
         public Guid TagID { get; set; }
     }
 

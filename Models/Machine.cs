@@ -19,7 +19,10 @@ namespace Maskinstation.Models
         public Guid BrandID { get; set; }
         public Brand Brand { get; set; }
         public ICollection <MachineTags> MachineTags { get; set; }
-        public ICollection<Image> images { get; set; }  
+
+        [ForeignKey("GalleryID")]
+        public Guid? GalleryID { get; set; }
+        public Gallery Gallery { get; set; }
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Maskinstation.Models
 {
@@ -6,6 +7,12 @@ namespace Maskinstation.Models
     {
         [Key]
         public Guid ImageID { get; set; }
-        public string ImageURL { get; set; }
+        public string FileID { get; set; }
+        public DateTime Created { get; set; }
+        [ForeignKey("GalleryID")]
+        public Guid GalleryID { get; set; }
+        public Gallery Gallery { get; set; }
+ 
+        public ICollection<ImageTag> Tags { get; set; }
     }
 }

@@ -13,12 +13,13 @@ namespace Maskinstation.Models
         public string Password { get; set; }
         public string Role { get; set; }
 
-        [ForeignKey("ImageID")]
-        public Guid? ImageID { get; set; }
-        public Image? Image { get; set; }
+        [ForeignKey("GalleryID")]
+        public Guid? GalleryID { get; set; }
+        public Gallery Gallery { get; set; }
+
         public string? RefreshToken { get; set; }
         public DateTime? RefeshTokenExpiryTime { get; set; }
         public ICollection<UserTags> UserTags { get; set; }
-        public ICollection<Image> images { get; set; }
+        
     }
 }

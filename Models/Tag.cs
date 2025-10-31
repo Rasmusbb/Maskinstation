@@ -12,6 +12,7 @@ namespace Maskinstation.Models
         [Key]
         public Guid TagID { get; set; }
         public string TagName { get; set; }
-        public TagType TagType { get; set; }    
+        public TagType TagType { get; set; }
+        public bool deletable { get; set; }
     }
 }

@@ -16,6 +16,11 @@ namespace Maskinstation.Data
             modelBuilder.Entity<User>()
             .HasIndex(u => u.Email)
             .IsUnique();
+
+            modelBuilder.Entity<Tag>()
+            .HasIndex(t => t.TagName)
+            .IsUnique();
+
             modelBuilder.Entity<UserTags>()
             .HasKey(ut => new { ut.UserID, ut.TagID });
 
@@ -31,6 +36,16 @@ namespace Maskinstation.Data
                 .HasOne(mt => mt.Machine)
                 .WithMany(m => m.MachineTags)
                 .HasForeignKey(mt => mt.MachineID);
+
+            modelBuilder.Entity<ImageTag>()
+                .HasKey(it => new { it.ImageID, it.TagID });
+
+            modelBuilder.Entity<ImageTag>()
+                .HasOne(it => it.Image)
+                .WithMany(i => i.Tags)
+                .HasForeignKey(it => it.ImageID);
+
+
             modelBuilder.Entity<User>().HasData(
             new User
             {
@@ -38,8 +53,17 @@ namespace Maskinstation.Data
                 Email = "Admin",
                 Role = "Admin",
                 Name = "Admin User",
-                Password = "16360cfa006cf26f830fca8cd83f78472bebe5227cad28c01269fc807d061d7e"
+                Password = "16360cfa006cf26f830fca8cd83f78472bebe5227cad28c01269fc807d061d7e",
             });
+            modelBuilder.Entity<Tag>().HasData(
+                new Tag
+                {
+                    TagID = Guid.Parse("d290f1ee-6c54-4b01-90e6-d701748f0851"),
+                    TagName = "profilpicture",
+                    TagType = TagType.User,
+                    deletable = false
+                }
+            );
         }
 
 
@@ -47,7 +71,10 @@ namespace Maskinstation.Data
         public DbSet<Machine> Machines { get; set; } = default!;
         public DbSet<Brand> Brands { get; set; } = default!;   
         public DbSet<Tag> Tags { get; set; } = default!;
+        public DbSet<Gallery> Galleries { get; set; } = default!;
         public DbSet<Image> Images { get; set; } = default!;
+
+        public DbSet<Service> Services { get; set; } = default!;
 
     }
 }

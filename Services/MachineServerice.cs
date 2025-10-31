@@ -25,6 +25,10 @@ namespace Maskinstation.Services
                 throw new InvalidOperationException(DBNullText);
             }
             Machine machine = MachineDTO.Adapt<Machine>();
+            machine.Gallery = new Gallery
+            {
+                Name = machine.MachineID + "'s Gallery"
+            };
             _context.Machines.Add(machine);
             await _context.SaveChangesAsync();
             return machine.Adapt<MachineDTOID>();
@@ -48,7 +52,7 @@ namespace Maskinstation.Services
             }
             else
             {
-                Machines = _context.Machines.Include(m => m.images).Include(m => m.Brand).Adapt<IEnumerable<MachineDTOID>>();
+                Machines = _context.Machines.Include(m => m.Gallery).Include(m => m.Brand).Adapt<IEnumerable<MachineDTOID>>();
             }
             return Machines;
         }
@@ -60,7 +64,7 @@ namespace Maskinstation.Services
             {
                 throw new InvalidOperationException(DBNullText);
             }
-            Machines = _context.Machines.Include(m => m.images).Include(m => m.Brand).Adapt<IEnumerable<MachineDTOID>>();
+            Machines = _context.Machines.Include(m => m.Gallery).Include(m => m.Brand).Adapt<IEnumerable<MachineDTOID>>();
            
             return Machines;
 

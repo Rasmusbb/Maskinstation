@@ -1,6 +1,7 @@
 ﻿using Maskinstation.DTOs;
 using Maskinstation.interfaces;
 using Maskinstation.Models;
+using Maskinstation.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -48,12 +49,21 @@ namespace Maskinstation.Controllers
             }
             catch(DbUpdateException dbex)
             {
-                return Conflict("An error occurred while saving the entity changes");
+                return Conflict($"An error occurred while saving the entity changes {dbex}");
             }
 
             
 
         }
+
+
+        [HttpGet("GetProfilPic")]
+        public async Task<IActionResult> GetProfilPic(string FileID)
+        {
+            var (ms,contentType) = await _context.GetProfilPic(FileID);
+            return File(ms,contentType);
+        }
+
 
         [HttpPost("RefreshToken")]
         public async Task<IActionResult> LoginByRefreshToken(RefreshTokenUser Token)
@@ -71,7 +81,7 @@ namespace Maskinstation.Controllers
                 }
             }catch(KeyNotFoundException Kex)
             {
-                return StatusCode(404, "UserID didn't match any in the stystem");
+                return StatusCode(404, $"UserID didn't match any in the stystem {Kex}");
             }
         }
 

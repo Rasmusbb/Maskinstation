@@ -21,10 +21,11 @@ namespace Maskinstation
             builder.Services.AddDbContext<MaskinstationContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("MachineContext") ?? throw new InvalidOperationException("Connection string 'MachineContext' not found.")));
             builder.Services.AddScoped<Auth>();
+            builder.Services.AddScoped<GridFSService>();    
             builder.Services.AddScoped<IUser, UserService>();
-            builder.Services.AddScoped<IImage, ImageService>();
             builder.Services.AddScoped<IBrand, BrandService>();
             builder.Services.AddScoped<IMachine,MachineService>();
+            builder.Services.AddScoped<IGallery, GalleryService>();
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

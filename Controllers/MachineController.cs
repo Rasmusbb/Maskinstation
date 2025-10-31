@@ -22,7 +22,7 @@ namespace Maskinstation.Controllers
         public async Task<IActionResult> Create(MachineDTO MachineDTO)
         {
             MachineDTOID Machine = await _context.CreateAsync(MachineDTO);
-            if (User == null)
+            if (Machine == null)
             {
                 return BadRequest();
             }

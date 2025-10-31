@@ -6,6 +6,7 @@ using Mapster;
 using BoilerMonitoringAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.Mvc;
 
 
 namespace Maskinstation.Services
@@ -14,11 +15,13 @@ namespace Maskinstation.Services
     {
         private readonly MaskinstationContext _context;
         private readonly Auth _auth;
+        private readonly GridFSService _GridFS;
 
-        public UserService(MaskinstationContext context, Auth auth)
+        public UserService(MaskinstationContext context, Auth auth, GridFSService gridFS)
         {
             _context = context;
             _auth = auth;
+            _GridFS = gridFS;
         }
 
         string DBNullText = "Database context is not available.";
@@ -31,6 +34,10 @@ namespace Maskinstation.Services
                     throw new InvalidOperationException(DBNullText);
                 }
                 User User = UserDTO.Adapt<User>();
+                User.Gallery = new Gallery
+                {
+                    Name = User.Name + "'s Gallery"
+                };
                 _context.Users.Add(User);
                 User.Password = _auth.Hash(User.Password, User.UserID.ToString());
                 await _context.SaveChangesAsync();
@@ -40,6 +47,18 @@ namespace Maskinstation.Services
             {
                 throw new DbUpdateException("Conflict while saving user. Possibly duplicate data.",dbEx);
             }
+        }
+
+        public async Task<string> AddProfilPic(IFormFile Image,Guid UserID)
+        {
+            string imageData = await _GridFS.UploadImageAsync(Image);
+
+            return imageData;
+        }
+
+        public async Task<(MemoryStream Stream, string ContentType)> GetProfilPic(string fileID)
+        {
+            return await _GridFS.DownloadImageAsync(fileID);
         }
 
         public async Task<UserTokens> Login(UserLoingObject UserLogin)
