@@ -7,6 +7,7 @@ using BoilerMonitoringAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace Maskinstation.Services
@@ -38,6 +39,7 @@ namespace Maskinstation.Services
                 {
                     Name = User.Name + "'s Gallery"
                 };
+                User.hasLoggedin = false;
                 _context.Users.Add(User);
                 User.Password = _auth.Hash(User.Password, User.UserID.ToString());
                 await _context.SaveChangesAsync();
@@ -56,9 +58,20 @@ namespace Maskinstation.Services
             return imageData;
         }
 
-        public async Task<(MemoryStream Stream, string ContentType)> GetProfilPic(string fileID)
+        
+        public async Task<string> ChangePassword(Guid UserID,string NewPassword)
         {
-            return await _GridFS.DownloadImageAsync(fileID);
+            User User = _context.Users.Find(UserID);
+            if(User == null)
+            {
+                throw new KeyNotFoundException($"User with ID '{UserID}' was not found.");
+            }
+            User.Password = _auth.Hash(User.Password, User.UserID.ToString());
+            await _context.SaveChangesAsync();
+            return "Password changed";
+
+
+
         }
 
         public async Task<UserTokens> Login(UserLoingObject UserLogin)
@@ -69,13 +82,25 @@ namespace Maskinstation.Services
             }
             UserLogin.Email = UserLogin.Email.ToLower();
             User user = _context.Users.FirstOrDefault(u => u.Email == UserLogin.Email);
+            UserDTOImageID UserDTO = user.Adapt<UserDTOImageID>();
+            Image profilPic = await _context.Images.Where(i => i.GalleryID == user.GalleryID).Where(i => i.Tags.Any(t => t.TagID == Guid.Parse("D290F1EE-6C54-4B01-90E6-D701748F0851"))).FirstOrDefaultAsync();
+            if(profilPic != null)
+            {
+                UserDTO.ImageID = profilPic.ImageID;
+            }
+            else
+            {
+                UserDTO.ImageID = Guid.Empty;
+            }
+            
+
             if (user != null)
             {
                 string hash = _auth.Hash(UserLogin.Password, user.UserID.ToString());
                 if (hash == user.Password)
                 {
                     RefreshToken RefreshToken = await CreateRefreshToken(user);
-                    return new UserTokens(_auth.GenerateJwtToken(user), RefreshToken.Token);
+                    return new UserTokens(_auth.GenerateJwtToken(UserDTO), RefreshToken.Token);
                 }
             }
             return null;
@@ -100,10 +125,10 @@ namespace Maskinstation.Services
                 else
                 {
                     RefreshToken RefreshToken = await CreateRefreshToken(user);
-                    return new UserTokens(_auth.GenerateJwtToken(user), RefreshToken.Token);
+                    return new UserTokens(_auth.GenerateJwtToken(user.Adapt<UserDTOImageID>()), RefreshToken.Token);
                 }
             }
-            return null;
+            return null; 
         }
 
         public async Task<IEnumerable<UserDTOID>> GetAllAsync()
@@ -150,6 +175,17 @@ namespace Maskinstation.Services
             return true;
         }
 
+        public async Task<bool> Logout(Guid UserID)
+        {
+            User user = await _context.Users.FindAsync(UserID);
+            if(user == null)
+            {
+                throw new KeyNotFoundException($"User with ID '{UserID}' was not found.");
+            }
+            user.RefeshTokenExpiryTime = DateTime.UtcNow;
+            return true;
+        }
+    
         public async Task<RefreshToken> CreateRefreshToken(User user)
         {
             RefreshToken RefeshToken = new RefreshToken();

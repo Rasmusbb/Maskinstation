@@ -4,8 +4,8 @@ using Maskinstation.Interfaces;
 using Maskinstation.Models;
 using Microsoft.EntityFrameworkCore;
 using Mapster;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Maskinstation.Migrations;
+
+
 
 namespace Maskinstation.Services
 {
@@ -33,6 +33,17 @@ namespace Maskinstation.Services
             return Gallery.Adapt<GalleryDTOID>();
         }
 
+
+        public async Task<(MemoryStream Stream, string ContentType)> GetProfilPic(Guid ImageID)
+        {
+            Image image = await _context.Images.FindAsync(ImageID);
+            if (image == null)
+            {
+                throw new KeyNotFoundException($"Picture with ID '{ImageID}' was not found.");
+            }
+            return await _GridFS.DownloadImageAsync(image.FileID);
+        }
+
         public async Task<ImageDTOID> AddImageToGallery(ImageDTOCreation imageCreation)
         {
             string FileID = await _GridFS.UploadImageAsync(imageCreation.ImageData);
@@ -43,21 +54,9 @@ namespace Maskinstation.Services
             image.FileID = FileID;
             image.Created = DateTime.UtcNow;
             _context.Images.Add(image);
-
-            var tags = await _context.Tags
-                .Where(t => imageCreation.Tags.Contains(t.TagID))
-                .ToListAsync();
-            List<ImageTag> ImageTags = new();
-            foreach (var tag in tags)
-            {
-                ImageTag imagetag = new ImageTag { ImageID = image.ImageID, Image = image, TagID = tag.TagID, Tag = tag };
-                ImageTags.Add(imagetag);
-            }
-            image.Tags = ImageTags;
             await _context.SaveChangesAsync();
             return image.Adapt<ImageDTOID>();
         }
-
 
         public async Task<IEnumerable<GalleryDTOID>> GetAllAsync()
         {

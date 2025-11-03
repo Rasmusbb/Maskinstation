@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Maskinstation.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class GalleryController : Controller
     {
         private readonly IGallery _context;
@@ -37,6 +39,14 @@ namespace Maskinstation.Controllers
                 return NotFound();
 
             return Ok(Gallery);
+        }
+
+
+        [HttpGet("GetProfilPic")]
+        public async Task<IActionResult> GetProfilPic(Guid ImageID)
+        {
+            var (ms, contentType) = await _context.GetProfilPic(ImageID);
+            return File(ms, contentType);
         }
 
         [HttpPost("AddImageToGallery")]

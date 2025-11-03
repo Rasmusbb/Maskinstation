@@ -25,11 +25,29 @@ namespace Maskinstation.Services
                 throw new InvalidOperationException(DBNullText);
             }
             Machine machine = MachineDTO.Adapt<Machine>();
+            _context.Machines.Add(machine);
             machine.Gallery = new Gallery
             {
                 Name = machine.MachineID + "'s Gallery"
             };
-            _context.Machines.Add(machine);
+            await _context.SaveChangesAsync();
+            return machine.Adapt<MachineDTOID>();
+        }
+
+
+        public async Task<MachineDTOID> AddTag(Guid MachineID, Guid TagID)
+        {
+            Machine machine = await _context.Machines.FindAsync(MachineID);
+            if (machine == null)
+            {
+                throw new KeyNotFoundException($"Machine with ID '{MachineID}' was not found.");
+            }
+            Tag tag = await _context.Tags.FindAsync(TagID);
+            if (tag == null)
+            {
+                throw new KeyNotFoundException($"Tag with ID '{TagID}' was not found.");
+            }
+            machine.Tags.Add(tag);
             await _context.SaveChangesAsync();
             return machine.Adapt<MachineDTOID>();
         }

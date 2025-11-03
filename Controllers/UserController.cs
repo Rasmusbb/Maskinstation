@@ -34,6 +34,20 @@ namespace Maskinstation.Controllers
             }
         }
 
+        [Authorize]
+        [HttpPut("ChangePassword")]
+        public async Task<ActionResult<string>> ChangePassword(Guid UserID,string NewPassword)
+        {
+            try
+            {
+                return await _context.ChangePassword(UserID, NewPassword);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("User Not Found");
+            }
+        }
+
         [Authorize(Roles = "Admin")]
         [HttpPost("Create")]
         public async Task<IActionResult> Create(UserDTOPas UserDTO)
@@ -57,12 +71,7 @@ namespace Maskinstation.Controllers
         }
 
 
-        [HttpGet("GetProfilPic")]
-        public async Task<IActionResult> GetProfilPic(string FileID)
-        {
-            var (ms,contentType) = await _context.GetProfilPic(FileID);
-            return File(ms,contentType);
-        }
+
 
 
         [HttpPost("RefreshToken")]

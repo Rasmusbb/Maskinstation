@@ -21,31 +21,6 @@ namespace Maskinstation.Data
             .HasIndex(t => t.TagName)
             .IsUnique();
 
-            modelBuilder.Entity<UserTags>()
-            .HasKey(ut => new { ut.UserID, ut.TagID });
-
-            modelBuilder.Entity<UserTags>()
-                .HasOne(ut => ut.User)
-                .WithMany(u => u.UserTags)
-                .HasForeignKey(ut => ut.UserID);
-
-            modelBuilder.Entity<MachineTags>()
-                .HasKey(mt => new { mt.MachineID, mt.TagID });
-
-            modelBuilder.Entity<MachineTags>()
-                .HasOne(mt => mt.Machine)
-                .WithMany(m => m.MachineTags)
-                .HasForeignKey(mt => mt.MachineID);
-
-            modelBuilder.Entity<ImageTag>()
-                .HasKey(it => new { it.ImageID, it.TagID });
-
-            modelBuilder.Entity<ImageTag>()
-                .HasOne(it => it.Image)
-                .WithMany(i => i.Tags)
-                .HasForeignKey(it => it.ImageID);
-
-
             modelBuilder.Entity<User>().HasData(
             new User
             {
@@ -54,7 +29,17 @@ namespace Maskinstation.Data
                 Role = "Admin",
                 Name = "Admin User",
                 Password = "16360cfa006cf26f830fca8cd83f78472bebe5227cad28c01269fc807d061d7e",
+                hasLoggedin = false
             });
+
+            modelBuilder.Entity<Gallery>().HasData(
+                new Gallery
+                {
+                    GalleryID = Guid.Parse("cd74f600-05b6-4776-ba5e-1bfe3334e6d3"),
+                    Name = "Brands",
+                    deletable = false
+                });
+
             modelBuilder.Entity<Tag>().HasData(
                 new Tag
                 {

@@ -17,7 +17,7 @@ namespace Maskinstation.Controllers
             _context = MachineService;
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost("Create")]
         public async Task<IActionResult> Create(MachineDTO MachineDTO)
         {

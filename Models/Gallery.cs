@@ -7,5 +7,6 @@ namespace Maskinstation.Models
         public Guid GalleryID { get; set; }
         public string Name { get; set; }
         public ICollection<Image> Images { get; set; }
+        public bool deletable { get; set; }
     }
 }

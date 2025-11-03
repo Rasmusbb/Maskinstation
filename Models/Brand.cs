@@ -9,9 +9,8 @@ namespace Maskinstation.Models
         public Guid BrandID { get; set; }
         public string BrandName { get; set; }
 
-        [ForeignKey("GalleryID")]
-        public Guid? GalleryID { get; set; }
-        public Gallery Gallery { get; set; }
-
+        [ForeignKey("ImageID")]
+        public Guid ImageID { get; set; }
+        public Image Image { get; set; }
     }
 }

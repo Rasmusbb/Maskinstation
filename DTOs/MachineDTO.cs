@@ -13,8 +13,8 @@ namespace Maskinstation.DTOs
     {
         public Guid MachineID { get; set; }
         public Guid UserID { get; set; }
-        public BrandDTOID Brand {get; set;}
-        public List<ImageDTOID> Images { get; set; }
+        public Guid BrandID {get; set;}
+        public Guid GalleryID { get; set; }
 
     }
 }

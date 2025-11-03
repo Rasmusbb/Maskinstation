@@ -12,6 +12,7 @@ namespace Maskinstation.Models
         public string Email { get; set; }
         public string Password { get; set; }
         public string Role { get; set; }
+        public bool hasLoggedin { get; set; }
 
         [ForeignKey("GalleryID")]
         public Guid? GalleryID { get; set; }
@@ -19,7 +20,7 @@ namespace Maskinstation.Models
 
         public string? RefreshToken { get; set; }
         public DateTime? RefeshTokenExpiryTime { get; set; }
-        public ICollection<UserTags> UserTags { get; set; }
+        public ICollection<Tag> Tags { get; set; }
         
     }
 }

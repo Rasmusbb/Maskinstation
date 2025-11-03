@@ -6,9 +6,10 @@ namespace Maskinstation.Interfaces
 {
     public interface IUser : ICRUD<UserDTO, UserDTOID>
     {
-        Task<(MemoryStream Stream, string ContentType)> GetProfilPic(string fileID);
         Task<UserTokens> Login(UserLoingObject UserLogin);
+        Task<bool> Logout(Guid UserID);
         Task<UserTokens> RefreshToken(RefreshTokenUser Token);
+        Task<string> ChangePassword(Guid UserID, string NewPassword);
 
     }
 }

@@ -3,7 +3,7 @@
     public class BrandDTO
     {
         public string BrandName { get; set; }
-        public string ImageID { get; set; }
+        public Guid ImageID { get; set; }
     }
     public class BrandDTOID : BrandDTO
     {

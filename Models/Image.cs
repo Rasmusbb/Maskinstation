@@ -13,6 +13,6 @@ namespace Maskinstation.Models
         public Guid GalleryID { get; set; }
         public Gallery Gallery { get; set; }
  
-        public ICollection<ImageTag> Tags { get; set; }
+        public ICollection<Tag> Tags { get; set; }
     }
 }

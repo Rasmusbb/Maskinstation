@@ -1,5 +1,7 @@
 ﻿
 
+using MongoDB.Driver;
+
 namespace Maskinstation.DTOs
 {
     public class UserDTO
@@ -8,7 +10,18 @@ namespace Maskinstation.DTOs
         public string Email { get; set; }
         public string Role { get; set; }
 
+
     }
+
+
+    public class UserDTOImageID : UserDTO
+    {
+        public Guid UserID { get; set; }
+        public Guid? ImageID { get; set; }
+        public bool hasLoggedin { get; set; }
+    }
+
+
     public class UserLoingObject()
     {
         public string Email { get; set; }

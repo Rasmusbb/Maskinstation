@@ -32,12 +32,13 @@ namespace Maskinstation.Services
 
         public async Task<IEnumerable<BrandDTOID>> GetAllAsync()
         {
-            IEnumerable<BrandDTOID> Brands = new List<BrandDTOID>();
             if (_context.Brands == null)
             {
                 throw new InvalidOperationException(DBNullText);
             }
-            Brands = _context.Brands.Adapt<IEnumerable<BrandDTOID>>();
+
+            var brands = await _context.Brands.ToListAsync();
+            IEnumerable<BrandDTOID> Brands = brands.Adapt<IEnumerable<BrandDTOID>>();
             return Brands;
 
         }
@@ -48,7 +49,7 @@ namespace Maskinstation.Services
             {
                 throw new InvalidOperationException(DBNullText);
             }
-            Brand Brand = await _context.Brands.FindAsync(BrandID);
+            Brand Brand = await _context.Brands.FirstOrDefaultAsync();
             return Brand.Adapt<BrandDTOID>();
         }
 
