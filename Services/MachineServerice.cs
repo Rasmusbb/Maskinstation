@@ -6,6 +6,7 @@ using Maskinstation.Models;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace Maskinstation.Services
 {
     public class MachineService : IMachine
@@ -47,14 +48,35 @@ namespace Maskinstation.Services
             {
                 throw new KeyNotFoundException($"Tag with ID '{TagID}' was not found.");
             }
+            if(machine.Tags == null)
+            {
+                machine.Tags = new List<Tag>();
+            }
             machine.Tags.Add(tag);
+            await _context.SaveChangesAsync();
+            return machine.Adapt<MachineDTOID>();
+        }
+
+        public async Task<MachineDTOID> AddDriver(Guid MachineID, Guid UserID)
+        {
+            Machine machine = await _context.Machines.FindAsync(MachineID);
+            if (machine == null)
+            {
+                throw new KeyNotFoundException($"Machine with ID '{MachineID}' was not found.");
+            }
+            User User = await _context.Users.FindAsync(UserID);
+            if (User == null)
+            {
+                throw new KeyNotFoundException($"User with ID '{UserID}' was not found.");
+            }
+            machine.UserID = User.UserID;
             await _context.SaveChangesAsync();
             return machine.Adapt<MachineDTOID>();
         }
 
         public async Task<IEnumerable<MachineDTOID>> GetByTags(List<Guid> TagIDs)
         {
-            IEnumerable<MachineDTOID> Machines = new List<MachineDTOID>();
+            IEnumerable<Machine> Machines = new List<Machine>();
             if (_context.Machines == null)
             {
                 throw new InvalidOperationException(DBNullText);
@@ -66,13 +88,13 @@ namespace Maskinstation.Services
             List<Tag> tags = await _context.Tags.Where(t => TagIDs.Contains(t.TagID)).ToListAsync();
             if (tags.Count != 0)
             {
-                //Machines = _context.Machines.Where(m => m.MachineTags.Any(t => tags.Contains(t))).Include(m => m.images).Include(m => m.Brand).Adapt<IEnumerable<MachineDTOID>>();
+               Machines = await _context.Machines.Include(m => m.Gallery).Include(m => m.Brand).Where(m => m.Tags.Any(t => TagIDs.Contains(t.TagID))).ToListAsync();
             }
             else
             {
-                Machines = _context.Machines.Include(m => m.Gallery).Include(m => m.Brand).Adapt<IEnumerable<MachineDTOID>>();
+                Machines = _context.Machines.Include(m => m.Gallery).Include(m => m.Brand);
             }
-            return Machines;
+            return Machines.Adapt<IEnumerable<MachineDTOID>>();
         }
 
         public async Task<IEnumerable<MachineDTOID>> GetAllAsync()
@@ -106,8 +128,9 @@ namespace Maskinstation.Services
             }
             return true;
         }
+ 
 
-        public async Task<bool> DeleteAsync(Guid MachineID)
+       public async Task<bool> DeleteAsync(Guid MachineID)
         {
             throw new NotImplementedException();
         }

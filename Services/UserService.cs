@@ -143,14 +143,24 @@ namespace Maskinstation.Services
 
         }
 
-        public async Task<UserDTOID> GetByIDAsync(Guid UserID)
+        public async Task<UserDTOImageID> GetByIDAsync(Guid UserID)
         {
             if (_context.Users == null)
             {
                 throw new InvalidOperationException(DBNullText);
             }
-            User User = await _context.Users.FindAsync(UserID);
-            return User.Adapt<UserDTOID>();
+            User user = await _context.Users.FindAsync(UserID);
+            Image profilPic = await _context.Images.Where(i => i.GalleryID == user.GalleryID).Where(i => i.Tags.Any(t => t.TagID == Guid.Parse("D290F1EE-6C54-4B01-90E6-D701748F0851"))).FirstOrDefaultAsync();
+            UserDTOImageID userDTO = user.Adapt<UserDTOImageID>();
+            if(profilPic != null)
+            {
+                userDTO.ImageID = profilPic.ImageID;
+            }
+            else
+            {
+                userDTO.ImageID = Guid.Empty;
+            }
+                return userDTO;
         }
 
         public async Task<bool> UpdateAsync(Guid UserID, UserDTO User)

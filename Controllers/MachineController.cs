@@ -17,7 +17,7 @@ namespace Maskinstation.Controllers
             _context = MachineService;
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("Create")]
         public async Task<IActionResult> Create(MachineDTO MachineDTO)
         {
@@ -48,11 +48,29 @@ namespace Maskinstation.Controllers
             return Ok(machine);
         }
 
-        [HttpGet("GetByTags")]
-        public  async Task<ActionResult<MachineDTOID>> GetByTags(List<Guid> TagIDs)
+        [Authorize(Roles = "Admin")]
+        [HttpPut("AddTag")]
+        public async Task<ActionResult<bool>> AddTag(Guid MachineID,Guid TagID)
         {
-            return Ok(await _context.GetByTags(TagIDs));
+            MachineDTOID Machine = await _context.AddTag(MachineID, TagID);
+            return Ok(Machine);
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("AddDriver")]
+        public async Task<ActionResult<bool>> AddDriver(Guid MachineID, Guid UserID)
+        {
+            MachineDTOID Machine = await _context.AddDriver(MachineID, UserID);
+            return Ok(Machine);
+        }
+
+        [HttpGet("GetByTags")]
+        public async Task<ActionResult<MachineDTOID>> GetByTags([FromQuery] List<Guid> TagIDs)
+        {
+            var result = await _context.GetByTags(TagIDs);
+            return Ok(result);
+        }
+
 
 
         [HttpGet("GetAll")]

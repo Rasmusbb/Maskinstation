@@ -3,10 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Maskinstation.Models
 {
+    public enum ImageType
+    {
+        image,
+        video
+    }
     public class Image
     {
         [Key]
         public Guid ImageID { get; set; }
+        public ImageType imageType {get; set;}
         public string FileID { get; set; }
         public DateTime Created { get; set; }
         [ForeignKey("GalleryID")]

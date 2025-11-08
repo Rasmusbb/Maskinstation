@@ -49,13 +49,27 @@ namespace Maskinstation.Controllers
             return File(ms, contentType);
         }
 
+
+        [HttpGet("GetFirstPic")]
+        public async Task<IActionResult> GetFirstPic(Guid GalleryID)
+        {
+            var (ms, contentType) = await _context.GetFirstPic(GalleryID);
+            return File(ms, contentType);
+        }
+
         [HttpPost("AddImageToGallery")]
+        [RequestSizeLimit(300_000_000)]
         public async Task<IActionResult> AddprofilPic(ImageDTOCreation Image)
         {
             return Ok(await _context.AddImageToGallery(Image));
 
         }
-
+        [HttpGet("video/{ImageID}")]
+        public async Task<IActionResult> GetVideo(Guid ImageID)
+        {
+            var (stream, contentType) = await _context.GetVideo(ImageID);
+            return File(stream, contentType,enableRangeProcessing: true);
+        }
 
         [HttpGet("GetAll")]
         public async Task<ActionResult<GalleryDTOID>> GetAll()

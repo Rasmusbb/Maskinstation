@@ -44,6 +44,16 @@ namespace Maskinstation.Services
             return await _GridFS.DownloadImageAsync(image.FileID);
         }
 
+        public async Task<(MemoryStream Stream, string ContentType)> GetFirstPic(Guid GalleryID)
+        {
+            Image image = await _context.Images.Where(i => i.GalleryID == GalleryID).FirstOrDefaultAsync();
+            if(image == null)
+            {
+                throw new KeyNotFoundException($"Gallery empty");
+            }
+            return await GetProfilPic(image.ImageID);
+        }
+
         public async Task<ImageDTOID> AddImageToGallery(ImageDTOCreation imageCreation)
         {
             string FileID = await _GridFS.UploadImageAsync(imageCreation.ImageData);
@@ -56,6 +66,18 @@ namespace Maskinstation.Services
             _context.Images.Add(image);
             await _context.SaveChangesAsync();
             return image.Adapt<ImageDTOID>();
+        }
+
+
+
+        public async Task<(Stream Stream, string ContentType)> GetVideo(Guid ImageID)
+        {
+            Image image = await _context.Images.FindAsync(ImageID);
+            if (image == null)
+            {
+                throw new KeyNotFoundException($"Picture with ID '{ImageID}' was not found.");
+            }
+            return await _GridFS.GetVideoAsync(image.FileID);
         }
 
         public async Task<IEnumerable<GalleryDTOID>> GetAllAsync()

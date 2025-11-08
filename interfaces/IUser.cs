@@ -11,5 +11,6 @@ namespace Maskinstation.Interfaces
         Task<UserTokens> RefreshToken(RefreshTokenUser Token);
         Task<string> ChangePassword(Guid UserID, string NewPassword);
 
+        Task<UserDTOImageID> GetByIDAsync(Guid id);
     }
 }
