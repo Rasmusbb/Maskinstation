@@ -36,16 +36,30 @@ namespace Maskinstation.Services
 
         }
 
-        public async Task<(MemoryStream,string ContentType)> DownloadImageAsync(string fileId)
+        public async Task<(MemoryStream,string ContentType)> DownloadImageAsync(string FileId)
         {
-            var ms = new MemoryStream();
-            var filter = Builders<GridFSFileInfo>.Filter.Eq("_id", new ObjectId(fileId));
-            var fileinfo = await _bucket.Find(filter).FirstOrDefaultAsync();
+            MemoryStream ms = new();
+            FilterDefinition<GridFSFileInfo> filter = Builders<GridFSFileInfo>.Filter.Eq("_id", new ObjectId(FileId));
+            GridFSFileInfo fileinfo = await _bucket.Find(filter).FirstOrDefaultAsync();
             string contentType = fileinfo.Metadata["contentType"]?.AsString ?? "application/octet-stream";
-            await _bucket.DownloadToStreamAsync(new ObjectId(fileId), ms);
+            await _bucket.DownloadToStreamAsync(new ObjectId(FileId), ms);
             ms.Position = 0;
             return (ms, contentType);
         }
+
+        public async Task<(Stream Stream, string ContentType)> GetVideoAsync(string FileId)
+        {
+            var Filter = Builders<GridFSFileInfo>.Filter.Eq("_id", new ObjectId(FileId));
+            var fileInfo = await _bucket.Find(Filter).FirstOrDefaultAsync();
+
+            if (fileInfo == null)
+                throw new KeyNotFoundException($"Video '{FileId}' not found in GridFS.");
+            string contentType = fileInfo.Metadata["contentType"]?.AsString ?? "application/octet-stream";
+            var stream = await _bucket.OpenDownloadStreamAsync(new ObjectId(FileId));
+            return (stream, contentType);
+        }
+
+
 
     }
 }
