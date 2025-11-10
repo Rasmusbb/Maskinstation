@@ -39,6 +39,7 @@ namespace Maskinstation.DTOs
     public class UserDTOID : UserDTO
     {
         public Guid UserID { get; set; }
+        public Guid GalleryID { get; set; }
     }
 
     public class UserDTOPas : UserDTO

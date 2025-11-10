@@ -10,7 +10,6 @@ namespace Maskinstation.Interfaces
         Task<bool> Logout(Guid UserID);
         Task<UserTokens> RefreshToken(RefreshTokenUser Token);
         Task<string> ChangePassword(Guid UserID, string NewPassword);
-
         Task<UserDTOImageID> GetByIDAsync(Guid id);
     }
 }

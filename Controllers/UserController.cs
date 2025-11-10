@@ -35,7 +35,7 @@ namespace Maskinstation.Controllers
         }
 
         [Authorize]
-        [HttpPut("ChangePassword")]
+        [HttpPatch("ChangePassword")]
         public async Task<ActionResult<string>> ChangePassword(Guid UserID,string NewPassword)
         {
             try
