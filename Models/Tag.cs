@@ -6,7 +6,8 @@ namespace Maskinstation.Models
     public enum TagType
     {
         User,
-        Machine
+        Machine,
+        Asset
     }
     public class Tag
     {

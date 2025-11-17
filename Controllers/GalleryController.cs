@@ -50,10 +50,10 @@ namespace Maskinstation.Controllers
         }
 
 
-        [HttpGet("GetFirstPic")]
-        public async Task<IActionResult> GetFirstPic(Guid GalleryID)
+        [HttpGet("GetFirstPicByTag")]
+        public async Task<IActionResult> GetFirstPicByTag(Guid GalleryID,string TagName)
         {
-            var (ms, contentType) = await _context.GetFirstPic(GalleryID);
+            var (ms, contentType) = await _context.GetFirstPicByTag(GalleryID,TagName);
             return File(ms, contentType);
         }
 

@@ -32,20 +32,22 @@ namespace Maskinstation.Data
 
         public string GenerateJwtToken(UserDTOImageID user)
         {
-            string value = _configuration.GetSection("Jwt:Key").Value;
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Jwt:Key").Value));
-            string keytext = key.Key.ToString();
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            Claim[] claims = new Claim[]
+            List<Claim> claims = new List<Claim>
             {
                 new Claim("UserID", user.UserID.ToString()),
                 new Claim("Name", user.Name.ToString()),
                 new Claim("Email",user.Email.ToString()),
                 new Claim("HasLoggedin",user.hasLoggedin.ToString()),
                 new Claim("ProfilPic",user.ImageID.ToString()),
-                new Claim(ClaimTypes.Role, user.Role)
-
             };
+            foreach (var role in user.Roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role.RoleName));
+            }
+
+
             var token = new JwtSecurityToken(
                 issuer: _configuration.GetSection("Jwt:Issuer").Value,
                 audience: _configuration.GetSection("Jwt:Audience").Value,

@@ -28,6 +28,7 @@ namespace Maskinstation
             builder.Services.AddScoped<IMachine,MachineService>();
             builder.Services.AddScoped<IGallery, GalleryService>();
             builder.Services.AddScoped<ITag, TagService>();
+            builder.Services.AddScoped<IRole, RoleService>();
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -49,7 +50,7 @@ namespace Maskinstation
             });
             builder.Services.Configure<FormOptions>(options =>
             {
-                options.MultipartBodyLengthLimit = 250 * 1024 * 1024; // 250 MB
+                options.MultipartBodyLengthLimit = 250 * 1024 * 1024; 
             });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

@@ -1,9 +1,10 @@
-﻿using Maskinstation.Data;
+﻿using Mapster;
+using Maskinstation.Data;
 using Maskinstation.DTOs;
 using Maskinstation.Interfaces;
 using Maskinstation.Models;
 using Microsoft.EntityFrameworkCore;
-using Mapster;
+
 
 
 
@@ -54,6 +55,16 @@ namespace Maskinstation.Services
             return await GetProfilPic(image.ImageID);
         }
 
+        public async Task<(MemoryStream Stream, string ContentType)> GetFirstPicByTag(Guid GalleryID,string TagName)
+        {
+            Image image = await _context.Images.Include(i => i.Tags).Where(i => i.GalleryID == GalleryID && i.Tags.Any(t => t.TagName == TagName)).OrderBy(i => i.Created).FirstOrDefaultAsync();
+            if (image == null)
+            {
+                throw new KeyNotFoundException($"Gallery empty");
+            }
+            return await GetProfilPic(image.ImageID);
+        }
+
         public async Task<ImageDTOID> AddImageToGallery(ImageDTOCreation imageCreation)
         {
             string FileID = await _GridFS.UploadImageAsync(imageCreation.ImageData);
@@ -63,8 +74,11 @@ namespace Maskinstation.Services
             Image image = imageCreation.Adapt<Image>();
             image.FileID = FileID;
             image.Created = DateTime.UtcNow;
+            var tags = await _context.Tags.Where(t => imageCreation.Tags.Contains(t.TagID)).ToListAsync();
+            image.Tags = tags;
             _context.Images.Add(image);
             await _context.SaveChangesAsync();
+
             return image.Adapt<ImageDTOID>();
         }
 

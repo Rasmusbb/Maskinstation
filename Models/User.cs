@@ -20,7 +20,7 @@ namespace Maskinstation.Models
         public string? RefreshToken { get; set; }
         public DateTime? RefeshTokenExpiryTime { get; set; }
         public ICollection<Tag> Tags { get; set; }
-        public ICollection<Roles> Roles { get; set; }
+        public ICollection<Role> Roles { get; set; }
         
     }
 }

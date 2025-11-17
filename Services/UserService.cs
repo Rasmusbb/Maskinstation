@@ -39,6 +39,7 @@ namespace Maskinstation.Services
                 {
                     Name = User.Name + "'s Gallery"
                 };
+                User.Roles = new List<Role>();
                 User.hasLoggedin = false;
                 _context.Users.Add(User);
                 User.Password = _auth.Hash(User.Password, User.UserID.ToString());
@@ -81,7 +82,7 @@ namespace Maskinstation.Services
                 throw new InvalidOperationException(DBNullText);
             }
             UserLogin.Email = UserLogin.Email.ToLower();
-            User user = _context.Users.FirstOrDefault(u => u.Email == UserLogin.Email);
+            var user = _context.Users.Include(u => u.Roles).FirstOrDefault(u => u.Email == UserLogin.Email);
             UserDTOImageID UserDTO = user.Adapt<UserDTOImageID>();
             Image profilPic = await _context.Images.Where(i => i.GalleryID == user.GalleryID).Where(i => i.Tags.Any(t => t.TagID == Guid.Parse("D290F1EE-6C54-4B01-90E6-D701748F0851"))).FirstOrDefaultAsync();
             if(profilPic != null)
@@ -133,13 +134,13 @@ namespace Maskinstation.Services
 
         public async Task<IEnumerable<UserDTOID>> GetAllAsync()
         {
-            IEnumerable<UserDTOID> Users = new List<UserDTOID>();
+
             if (_context.Users == null)
             {
                 throw new InvalidOperationException(DBNullText);
             }
-            Users = _context.Users.Adapt<IEnumerable<UserDTOID>>();
-            return Users;
+            List<User> Users = await _context.Users.Where(u => u.UserID != Guid.Parse("2c08577b-c673-416e-031b-08ddfcc99d40")).Include(u => u.Roles).ToListAsync();
+            return Users.Adapt<IEnumerable<UserDTOID>>();
 
         }
 

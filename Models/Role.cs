@@ -2,7 +2,7 @@
 
 namespace Maskinstation.Models
 {
-    public class Roles
+    public class Role
     {
         [Key]
         public Guid RoleID { get; set; }

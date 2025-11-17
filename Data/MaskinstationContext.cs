@@ -21,7 +21,7 @@ namespace Maskinstation.Data
             .HasIndex(t => t.TagName)
             .IsUnique();
 
-            modelBuilder.Entity<Roles>().HasData( new Roles
+            modelBuilder.Entity<Role>().HasData( new Role
             {
                 RoleID = Guid.Parse("1c08577b-c673-416e-031b-08ddfcc99d40"),
                 RoleName = "Admin"
@@ -41,7 +41,8 @@ namespace Maskinstation.Data
                 .HasMany(u => u.Roles)
                 .WithMany(r => r.Users)
                 .UsingEntity(j => j.HasData(
-                    new { UsersUserID = Guid.Parse("2c08577b-c673-416e-031b-08ddfcc99d40"), RolesRoleID = Guid.Parse("1c08577b-c673-416e-031b-08ddfcc99d40") }
+                    new { UsersUserID = Guid.Parse("2c08577b-c673-416e-031b-08ddfcc99d40"), 
+                    RolesRoleID = Guid.Parse("1c08577b-c673-416e-031b-08ddfcc99d40") }
                 ));
 
             modelBuilder.Entity<Gallery>().HasData(
@@ -66,6 +67,20 @@ namespace Maskinstation.Data
                     TagName = "profilpicture",
                     TagType = TagType.User,
                     deletable = false
+                },
+                new Tag
+                {
+                    TagID = Guid.Parse("cb78c0f5-c642-47a2-8f2d-9d2a88f571dd"),
+                    TagName = "Background",
+                    TagType = TagType.Asset,
+                    deletable = false
+                },
+                new Tag
+                {
+                    TagID = Guid.Parse("bc19339d-7871-4a16-913e-c95f55c7ce40"),
+                    TagName = "Logo",
+                    TagType = TagType.Asset,
+                    deletable = false
                 }
             );
         }
@@ -77,7 +92,7 @@ namespace Maskinstation.Data
         public DbSet<Tag> Tags { get; set; } = default!;
         public DbSet<Gallery> Galleries { get; set; } = default!;
         public DbSet<Image> Images { get; set; } = default!;
-
+        public DbSet<Role> Roles { get; set; } = default!;
         public DbSet<Service> Services { get; set; } = default!;
 
     }
