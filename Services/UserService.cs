@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Text;
+using System.Security.Cryptography;
 
 
 namespace Maskinstation.Services
@@ -42,7 +44,7 @@ namespace Maskinstation.Services
                 User.Roles = new List<Role>();
                 User.hasLoggedin = false;
                 _context.Users.Add(User);
-                User.Password = _auth.Hash(User.Password, User.UserID.ToString());
+                User.Password = Hash(User.Password, User.UserID.ToString());
                 await _context.SaveChangesAsync();
                 return User.Adapt<UserDTOID>();
             }
@@ -67,7 +69,7 @@ namespace Maskinstation.Services
             {
                 throw new KeyNotFoundException($"User with ID '{UserID}' was not found.");
             }
-            User.Password = _auth.Hash(User.Password, User.UserID.ToString());
+            User.Password = Hash(User.Password, User.UserID.ToString());
             await _context.SaveChangesAsync();
             return "Password changed";
 
@@ -97,7 +99,7 @@ namespace Maskinstation.Services
 
             if (user != null)
             {
-                string hash = _auth.Hash(UserLogin.Password, user.UserID.ToString());
+                string hash = Hash(UserLogin.Password, user.UserID.ToString());
                 if (hash == user.Password)
                 {
                     RefreshToken RefreshToken = await CreateRefreshToken(user);
@@ -114,7 +116,7 @@ namespace Maskinstation.Services
                 throw new KeyNotFoundException($"User with ID {Token.UserID} was not found.");
 
             }
-            if (_auth.Hash(Token.RefreshToken, user.UserID.ToString()) == user.RefreshToken)
+            if (Hash(Token.RefreshToken, user.UserID.ToString()) == user.RefreshToken)
             {
                 if (user.RefeshTokenExpiryTime < DateTime.UtcNow)
                 {
@@ -201,10 +203,26 @@ namespace Maskinstation.Services
         {
             RefreshToken RefeshToken = new RefreshToken();
             user.RefeshTokenExpiryTime = RefeshToken.ExpiryTime;
-            user.RefreshToken = _auth.Hash(RefeshToken.Token, user.UserID.ToString());
+            user.RefreshToken = Hash(RefeshToken.Token, user.UserID.ToString());
             await _context.SaveChangesAsync();
             return RefeshToken;
         }
+
+        public string Hash(string password, string salt)
+        {
+
+            StringBuilder builder = new StringBuilder();
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password + salt));
+                foreach (byte b in bytes)
+                {
+                    builder.Append(b.ToString("x2"));
+                }
+            }
+            return builder.ToString();
+        }
+
     }
 
 }

@@ -15,7 +15,9 @@ namespace Maskinstation.Data
         {
             _configuration = configuration;
         }
-        public string Hash(string password,string salt)
+
+
+        public static string Hash(string password,string salt)
         {
 
             StringBuilder builder = new StringBuilder();
