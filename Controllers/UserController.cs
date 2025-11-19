@@ -52,6 +52,7 @@ namespace Maskinstation.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> Create(UserDTOPas UserDTO)
         {
+            Console.WriteLine(UserDTO);
             try
             {
                 UserDTOID User = await _context.CreateAsync(UserDTO);

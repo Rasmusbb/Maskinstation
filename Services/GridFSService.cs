@@ -23,6 +23,10 @@ namespace Maskinstation.Services
 
         public async Task<string> UploadImageAsync(IFormFile imageData)
         {
+            if (imageData == null)
+            {
+                throw new NullReferenceException();
+            }
             using var stream = imageData.OpenReadStream();
             GridFSUploadOptions Options = new()
             {
