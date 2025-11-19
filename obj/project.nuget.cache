@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "xKDjdw3jSE8=",
+  "dgSpecHash": "S4nZQ3NdiQU=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Rasmu\\source\\repos\\Rasmusbb\\MaskinstationNew\\Maskinstation.csproj",
+  "projectFilePath": "C:\\Users\\Rasmu\\source\\repos\\Rasmusbb\\MaskinstationBackend\\Maskinstation.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Rasmu\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\Rasmu\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
