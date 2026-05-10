@@ -54,7 +54,7 @@ namespace Maskinstation.Data
                 issuer: _configuration.GetSection("Jwt:Issuer").Value,
                 audience: _configuration.GetSection("Jwt:Audience").Value,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(20),
+                expires: DateTime.UtcNow.AddMinutes(20),
                 signingCredentials: creds);
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

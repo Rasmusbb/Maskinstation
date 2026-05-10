@@ -31,7 +31,7 @@ namespace Maskinstation.Data
             new User
             {
                 UserID = Guid.Parse("2c08577b-c673-416e-031b-08ddfcc99d40"),
-                Email = "Admin",
+                Email = "admin",
                 Name = "Admin User",
                 Password = "16360cfa006cf26f830fca8cd83f78472bebe5227cad28c01269fc807d061d7e",
                 hasLoggedin = false

@@ -9,7 +9,7 @@ namespace BoilerMonitoringAPI.Data
         public RefreshToken()
         {
             Token = GenerateRefeshToken();
-            ExpiryTime = DateTime.Now.AddDays(90);
+            ExpiryTime = DateTime.UtcNow.AddDays(90);
         }
 
         public RefreshToken(string Token, DateTime ExpiryTime)
@@ -20,7 +20,7 @@ namespace BoilerMonitoringAPI.Data
         public string GenerateRefeshToken()
         {
             var randomNumber = new byte[32];
-            DateTime expiretime = DateTime.Now.AddDays(90);
+            DateTime expiretime = DateTime.UtcNow.AddDays(90);
             using (var rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(randomNumber);
