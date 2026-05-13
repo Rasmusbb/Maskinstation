@@ -44,6 +44,10 @@ namespace Maskinstation.Data
                 new Claim("HasLoggedin",user.hasLoggedin.ToString()),
                 new Claim("ProfilPic",user.ImageID.ToString()),
             };
+            if(user.Roles == null)
+            {
+                user.Roles = new();
+            }
             foreach (var role in user.Roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role.RoleName));
