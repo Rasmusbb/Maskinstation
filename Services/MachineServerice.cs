@@ -120,11 +120,15 @@ namespace Maskinstation.Services
             return machine.Adapt<MachineDTOID>();
         }
 
-        public async Task<bool> UpdateAsync(Guid MachineID, MachineDTO Machine) 
+        public async Task<bool> UpdateAsync(Guid MachineID, MachineDTO MachineDTO) 
         {
             if(_context.Machines != null)
             {
-                throw new InvalidOperationException(DBNullText);
+                Machine machine = await _context.Machines.FindAsync(MachineID);
+                machine.Model = MachineDTO.Model;
+                machine.BrandID = MachineDTO.BrandID;
+                machine.Description = MachineDTO.Description;
+                await _context.SaveChangesAsync();
             }
             return true;
         }

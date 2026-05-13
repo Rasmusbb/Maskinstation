@@ -5,6 +5,7 @@ using Maskinstation.Models;
 using Microsoft.EntityFrameworkCore;
 using Mapster;
 using Microsoft.AspNetCore.Http.HttpResults;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Maskinstation.Services
 {
@@ -49,10 +50,10 @@ namespace Maskinstation.Services
             {
                 throw new InvalidOperationException(DBNullText);
             }
-            Brand Brand = await _context.Brands.FirstOrDefaultAsync();
+            Brand Brand = await _context.Brands.FindAsync(BrandID);
             return Brand.Adapt<BrandDTOID>();
         }
-
+        
         public async Task<bool> UpdateAsync(Guid BrandID, BrandDTO Brand)
         {
             if (_context.Brands == null)

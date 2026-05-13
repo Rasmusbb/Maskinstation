@@ -79,34 +79,49 @@ namespace Maskinstation.Services
 
         public async Task<UserTokens> Login(UserLoingObject UserLogin)
         {
-            if (_context.Users == null)
+            try
             {
-                throw new InvalidOperationException(DBNullText);
-            }
-            UserLogin.Email = UserLogin.Email.ToLower();
-            var user = _context.Users.Include(u => u.Roles).FirstOrDefault(u => u.Email == UserLogin.Email);
-            UserDTOImageID UserDTO = user.Adapt<UserDTOImageID>();
-            Image profilPic = await _context.Images.Where(i => i.GalleryID == user.GalleryID).Where(i => i.Tags.Any(t => t.TagID == Guid.Parse("D290F1EE-6C54-4B01-90E6-D701748F0851"))).FirstOrDefaultAsync();
-            if(profilPic != null)
-            {
-                UserDTO.ImageID = profilPic.ImageID;
-            }
-            else
-            {
-                UserDTO.ImageID = Guid.Empty;
-            }
-            
+                if (UserLogin == null)
+                    return null;
+                if (UserLogin.Email == null || UserLogin.Password == null)
+                    return null;
 
-            if (user != null)
-            {
-                string hash = Hash(UserLogin.Password, user.UserID.ToString());
-                if (hash == user.Password)
-                {
-                    RefreshToken RefreshToken = await CreateRefreshToken(user);
-                    return new UserTokens(_auth.GenerateJwtToken(UserDTO), RefreshToken.Token);
-                }
+                if (_context.Users == null)
+                    throw new InvalidOperationException(DBNullText);
+                UserLogin.Email = UserLogin.Email.ToLower();
+
+                var user = await _context.Users
+                    .Include(u => u.Roles)
+                    .FirstOrDefaultAsync(u => u.Email == UserLogin.Email);
+
+                if (user == null)
+                    return null;
+
+                var hash = Hash(UserLogin.Password, user.UserID.ToString());
+
+                if (hash != user.Password)
+                    return null;
+
+                var userDto = user.Adapt<UserDTOImageID>();
+
+                var profilPic = await _context.Images
+                    .Where(i => i.GalleryID == user.GalleryID)
+                    .Where(i => i.Tags.Any(t => t.TagID == Guid.Parse("D290F1EE-6C54-4B01-90E6-D701748F0851")))
+                    .FirstOrDefaultAsync();
+
+                userDto.ImageID = profilPic?.ImageID ?? Guid.Empty;
+
+                var refreshToken = await CreateRefreshToken(user);
+
+                return new UserTokens(
+                    _auth.GenerateJwtToken(userDto),
+                    refreshToken.Token
+                );
             }
-            return null;
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
         public async Task<UserTokens> RefreshToken(RefreshTokenUser Token)
         {
@@ -116,7 +131,8 @@ namespace Maskinstation.Services
                 throw new KeyNotFoundException($"User with ID {Token.UserID} was not found.");
 
             }
-            if (Hash(Token.RefreshToken, user.UserID.ToString()) == user.RefreshToken)
+            string HashedToken = Hash(Token.RefreshToken, user.UserID.ToString());
+            if (HashedToken == user.RefreshToken)
             {
                 if (user.RefeshTokenExpiryTime < DateTime.UtcNow)
                 {

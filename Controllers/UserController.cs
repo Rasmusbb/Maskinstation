@@ -23,15 +23,19 @@ namespace Maskinstation.Controllers
         [HttpPost("Login")]
         public async Task<ActionResult<UserDTOIDTokens>> Login(UserLoingObject UserLogin)
         {
-            UserTokens Tokens = await _context.Login(UserLogin);
-            if (Tokens == null)
+            if(UserLogin != null)
             {
-                return Unauthorized();
+                UserTokens Tokens = await _context.Login(UserLogin);
+                if (Tokens == null)
+                {
+                    return Unauthorized();
+                }
+                else
+                {
+                    return Ok(Tokens);
+                }
             }
-            else
-            {
-                return Ok(Tokens);
-            }
+            return null;
         }
 
         [Authorize]
